@@ -1,0 +1,47 @@
+buat GL = muat_plugin("./opengl.so");
+
+fungsi _cek_error(v) {
+    jika tipe(v) == "teks" && panjang(v) >= 4 && potong(v, 0, 4) == "ERR:" {
+        lempar potong(v, 4, panjang(v));
+    }
+    hasil v;
+}
+
+kelas Jendela {
+    fungsi konstruktor(lebar, tinggi, judul) {
+        buat j = judul;
+        jika tipe(j) != "teks" { j = "Nusantara OpenGL"; }
+        ini.id = _cek_error(GL["gl_buka_jendela"](lebar, tinggi, j));
+    }
+
+    fungsi HarusTutup() { hasil GL["gl_harus_tutup"](ini.id); }
+    fungsi Tutup() { hasil GL["gl_tutup_jendela"](ini.id); }
+    fungsi SwapBuffers() { hasil GL["gl_swap_buffers"](ini.id); }
+
+    fungsi Ukuran() {
+        hasil json_decode(GL["gl_ukuran_jendela"](ini.id));
+    }
+
+    fungsi PollEvents() {
+        hasil json_decode(GL["gl_poll_events"](ini.id));
+    }
+
+    fungsi WarnaLatar(r, g, b, a) {
+        buat alpha = a;
+        jika tipe(alpha) != "angka" { alpha = 1; }
+        hasil GL["gl_clear_color"](r, g, b, alpha);
+    }
+
+    fungsi Bersihkan() { hasil GL["gl_clear"](); }
+    fungsi Viewport(x, y, w, h) { hasil GL["gl_viewport"](x, y, w, h); }
+    fungsi Versi() { hasil GL["gl_versi"](); }
+    fungsi Warna(r, g, b) { hasil GL["gl_warna"](r, g, b); }
+
+    fungsi Gambar(mode, titik) {
+        hasil GL["gl_gambar"](mode, json_encode(titik));
+    }
+}
+
+fungsi BukaJendela(lebar, tinggi, judul) {
+    hasil Jendela(lebar, tinggi, judul);
+}
